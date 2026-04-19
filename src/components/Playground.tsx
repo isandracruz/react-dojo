@@ -11,183 +11,185 @@ import {
   type SandpackThemeProp,
 } from "@codesandbox/sandpack-react"
 import { useTheme, type Theme } from "@/hooks/useTheme"
+import { useEditorTheme, type EditorThemeId } from "@/hooks/useEditorTheme"
 
-const darkTheme: SandpackThemeProp = {
-  colors: {
-    surface1: "#0f0f11",
-    surface2: "#131316",
-    surface3: "#1c1c20",
-    clickable: "#64636e",
-    base: "#ddd8d0",
-    disabled: "#46454f",
-    hover: "#f0ece6",
-    accent: "#c4956a",
-    error: "#c98b82",
-    errorSurface: "rgba(201, 139, 130, 0.07)",
+// ─── Editor theme definitions ────────────────────────────────────────────────
+
+const font = {
+  body: "var(--font-sans)",
+  mono: "var(--font-mono)",
+  size: "13.5px",
+  lineHeight: "22px",
+}
+
+const editorThemes: Record<EditorThemeId, { dark: SandpackThemeProp; light?: SandpackThemeProp }> = {
+  auto: {
+    dark: {
+      colors: {
+        surface1: "#0f0f11", surface2: "#131316", surface3: "#1c1c20",
+        clickable: "#64636e", base: "#ddd8d0", disabled: "#46454f",
+        hover: "#f0ece6", accent: "#c4956a", error: "#c98b82",
+        errorSurface: "rgba(201,139,130,0.07)",
+      },
+      syntax: {
+        plain: "#d4cfc8", comment: { color: "#4e4d59", fontStyle: "italic" },
+        keyword: "#c4956a", tag: "#c48878", punctuation: "#5e5c68",
+        definition: "#e0dbd4", property: "#8babcc", static: "#b49aca", string: "#87a89d",
+      },
+      font,
+    },
+    light: {
+      colors: {
+        surface1: "#f5f3ee", surface2: "#ede9e0", surface3: "#e4e0d6",
+        clickable: "#72706a", base: "#2e2b26", disabled: "#b0ada6",
+        hover: "#1a1915", accent: "#7a5a3d", error: "#9e4530",
+        errorSurface: "rgba(158,69,48,0.08)",
+      },
+      syntax: {
+        plain: "#3a342d", comment: { color: "#9e9b94", fontStyle: "italic" },
+        keyword: "#7a5a3d", tag: "#8d5840", punctuation: "#9c9890",
+        definition: "#1e1b16", property: "#4a6880", static: "#6b4a82", string: "#3d6b60",
+      },
+      font,
+    },
   },
-  syntax: {
-    plain: "#d4cfc8",
-    comment: { color: "#4e4d59", fontStyle: "italic" },
-    keyword: "#c4956a",
-    tag: "#c48878",
-    punctuation: "#5e5c68",
-    definition: "#e0dbd4",
-    property: "#8babcc",
-    static: "#b49aca",
-    string: "#87a89d",
+  dracula: {
+    dark: {
+      colors: {
+        surface1: "#282A36", surface2: "#1e2029", surface3: "#2d2f3f",
+        clickable: "#6272a4", base: "#f8f8f2", disabled: "#6272a4",
+        hover: "#ffffff", accent: "#bd93f9", error: "#ff5555",
+        errorSurface: "rgba(255,85,85,0.1)",
+      },
+      syntax: {
+        plain: "#f8f8f2", comment: { color: "#6272a4", fontStyle: "italic" },
+        keyword: "#ff79c6", tag: "#ff79c6", punctuation: "#f8f8f2",
+        definition: "#50fa7b", property: "#8be9fd", static: "#bd93f9", string: "#f1fa8c",
+      },
+      font,
+    },
   },
-  font: {
-    body: "var(--font-sans)",
-    mono: "var(--font-mono)",
-    size: "13.5px",
-    lineHeight: "22px",
+  nightOwl: {
+    dark: {
+      colors: {
+        surface1: "#011627", surface2: "#010e1a", surface3: "#0d2137",
+        clickable: "#607b96", base: "#d6deeb", disabled: "#496582",
+        hover: "#ffffff", accent: "#7e57c2", error: "#ef5350",
+        errorSurface: "rgba(239,83,80,0.1)",
+      },
+      syntax: {
+        plain: "#d6deeb", comment: { color: "#637777", fontStyle: "italic" },
+        keyword: "#c792ea", tag: "#7fdbca", punctuation: "#d6deeb",
+        definition: "#82aaff", property: "#addb67", static: "#ffcb8b", string: "#ecc48d",
+      },
+      font,
+    },
+  },
+  githubLight: {
+    dark: {
+      colors: {
+        surface1: "#ffffff", surface2: "#f6f8fa", surface3: "#eaeef2",
+        clickable: "#57606a", base: "#24292f", disabled: "#8c959f",
+        hover: "#0969da", accent: "#0969da", error: "#cf222e",
+        errorSurface: "rgba(207,34,46,0.08)",
+      },
+      syntax: {
+        plain: "#24292f", comment: { color: "#6e7781", fontStyle: "italic" },
+        keyword: "#cf222e", tag: "#116329", punctuation: "#24292f",
+        definition: "#8250df", property: "#0550ae", static: "#953800", string: "#0a3069",
+      },
+      font,
+    },
+  },
+  monokai: {
+    dark: {
+      colors: {
+        surface1: "#272822", surface2: "#1e1f1c", surface3: "#2d2e28",
+        clickable: "#75715e", base: "#f8f8f2", disabled: "#75715e",
+        hover: "#ffffff", accent: "#a6e22e", error: "#f92672",
+        errorSurface: "rgba(249,38,114,0.1)",
+      },
+      syntax: {
+        plain: "#f8f8f2", comment: { color: "#75715e", fontStyle: "italic" },
+        keyword: "#f92672", tag: "#f92672", punctuation: "#f8f8f2",
+        definition: "#a6e22e", property: "#66d9e8", static: "#ae81ff", string: "#e6db74",
+      },
+      font,
+    },
   },
 }
 
-const lightTheme: SandpackThemeProp = {
-  colors: {
-    surface1: "#f5f3ee",
-    surface2: "#ede9e0",
-    surface3: "#e4e0d6",
-    clickable: "#72706a",
-    base: "#2e2b26",
-    disabled: "#b0ada6",
-    hover: "#1a1915",
-    accent: "#7a5a3d",
-    error: "#9e4530",
-    errorSurface: "rgba(158, 69, 48, 0.08)",
-  },
-  syntax: {
-    plain: "#3a342d",
-    comment: { color: "#9e9b94", fontStyle: "italic" },
-    keyword: "#7a5a3d",
-    tag: "#8d5840",
-    punctuation: "#9c9890",
-    definition: "#1e1b16",
-    property: "#4a6880",
-    static: "#6b4a82",
-    string: "#3d6b60",
-  },
-  font: {
-    body: "var(--font-sans)",
-    mono: "var(--font-mono)",
-    size: "13.5px",
-    lineHeight: "22px",
-  },
+function getSandpackTheme(editorTheme: EditorThemeId, appTheme: Theme): SandpackThemeProp {
+  const t = editorThemes[editorTheme]
+  if (editorTheme === "auto") return appTheme === "light" ? t.light! : t.dark
+  return t.dark
 }
+
+// ─── Preview CSS ──────────────────────────────────────────────────────────────
 
 function buildStyles(theme: Theme): string {
   const t =
     theme === "dark"
       ? {
           colorScheme: "dark",
-          bg: "#0f0f11",
-          surface1: "#141417",
-          surface2: "#1c1c20",
-          fg: "#e8e3dc",
-          fgMuted: "#8a8a8f",
-          fgDim: "#5c5c61",
-          line: "rgba(255,255,255,0.06)",
-          lineStrong: "rgba(255,255,255,0.14)",
-          lineHover: "rgba(255,255,255,0.24)",
-          codeBg: "#141417",
-          accent: "#c4956a",
+          bg: "#0f0f11", surface1: "#141417", surface2: "#1c1c20",
+          fg: "#e8e3dc", fgMuted: "#8a8a8f", fgDim: "#5c5c61",
+          line: "rgba(255,255,255,0.06)", lineStrong: "rgba(255,255,255,0.14)",
+          lineHover: "rgba(255,255,255,0.24)", codeBg: "#141417", accent: "#c4956a",
         }
       : {
           colorScheme: "light",
-          bg: "#f5f3ee",
-          surface1: "#ede9e0",
-          surface2: "#e4e0d6",
-          fg: "#1a1915",
-          fgMuted: "#6b6966",
-          fgDim: "#a29f97",
-          line: "rgba(0,0,0,0.07)",
-          lineStrong: "rgba(0,0,0,0.14)",
-          lineHover: "rgba(0,0,0,0.26)",
-          codeBg: "#ede9e0",
-          accent: "#7a5a3d",
+          bg: "#f5f3ee", surface1: "#ede9e0", surface2: "#e4e0d6",
+          fg: "#1a1915", fgMuted: "#6b6966", fgDim: "#a29f97",
+          line: "rgba(0,0,0,0.07)", lineStrong: "rgba(0,0,0,0.14)",
+          lineHover: "rgba(0,0,0,0.26)", codeBg: "#ede9e0", accent: "#7a5a3d",
         }
 
   return `:root {
   color-scheme: ${t.colorScheme};
-  --bg: ${t.bg};
-  --surface-1: ${t.surface1};
-  --surface-2: ${t.surface2};
-  --fg: ${t.fg};
-  --fg-muted: ${t.fgMuted};
-  --fg-dim: ${t.fgDim};
-  --line: ${t.line};
-  --line-strong: ${t.lineStrong};
-  --accent: ${t.accent};
+  --bg: ${t.bg}; --surface-1: ${t.surface1}; --surface-2: ${t.surface2};
+  --fg: ${t.fg}; --fg-muted: ${t.fgMuted}; --fg-dim: ${t.fgDim};
+  --line: ${t.line}; --line-strong: ${t.lineStrong}; --accent: ${t.accent};
 }
 * { box-sizing: border-box; }
-body {
-  margin: 0;
-  padding: 0;
-  background: ${t.bg};
-  color: ${t.fg};
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-size: 13px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-button {
-  background: transparent;
-  color: ${t.fg};
-  border: 1px solid ${t.lineStrong};
-  padding: 5px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12.5px;
-  transition: background 120ms, border-color 120ms;
-}
-button:hover { background: ${t.line}; border-color: ${t.lineHover}; }
-button:focus-visible { outline: 1px solid ${t.accent}; outline-offset: 2px; }
-input, select, textarea {
-  background: transparent;
-  color: ${t.fg};
-  border: 1px solid ${t.lineStrong};
-  padding: 7px 10px;
-  border-radius: 5px;
-  font-family: inherit;
-  font-size: 13px;
-}
-input:focus, select:focus, textarea:focus {
-  outline: 1px solid ${t.accent};
-  outline-offset: 1px;
-  border-color: transparent;
-}
-input[type="range"] { padding: 0; border: none; }
-code, pre { font-family: ui-monospace, "Geist Mono", "SF Mono", Menlo, monospace; }
-code { color: ${t.fg}; padding: 0 2px; font-size: 0.9em; }
-pre {
-  background: ${t.codeBg};
-  border: 1px solid ${t.line};
-  border-radius: 5px;
-  padding: 12px;
-  overflow: auto;
-  font-size: 12px;
-  color: ${t.fg};
-}
-a { color: ${t.fg}; }
-hr { border: 0; border-top: 1px solid ${t.line}; margin: 14px 0; }
-::selection { background: ${t.fg}; color: ${t.bg}; }
+body { margin:0; padding:0; background:${t.bg}; color:${t.fg};
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:13px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+button { background:transparent; color:${t.fg}; border:1px solid ${t.lineStrong};
+  padding:5px 12px; border-radius:5px; cursor:pointer; font-family:inherit;
+  font-size:12.5px; transition:background 120ms,border-color 120ms; }
+button:hover { background:${t.line}; border-color:${t.lineHover}; }
+button:focus-visible { outline:1px solid ${t.accent}; outline-offset:2px; }
+input,select,textarea { background:transparent; color:${t.fg};
+  border:1px solid ${t.lineStrong}; padding:7px 10px; border-radius:5px;
+  font-family:inherit; font-size:13px; }
+input:focus,select:focus,textarea:focus { outline:1px solid ${t.accent};
+  outline-offset:1px; border-color:transparent; }
+input[type="range"] { padding:0; border:none; }
+code,pre { font-family:ui-monospace,"Geist Mono","SF Mono",Menlo,monospace; }
+code { color:${t.fg}; padding:0 2px; font-size:0.9em; }
+pre { background:${t.codeBg}; border:1px solid ${t.line}; border-radius:5px;
+  padding:12px; overflow:auto; font-size:12px; color:${t.fg}; }
+a { color:${t.fg}; }
+hr { border:0; border-top:1px solid ${t.line}; margin:14px 0; }
+::selection { background:${t.fg}; color:${t.bg}; }
 `
 }
 
-// Updates only /styles.css when theme changes — without touching user code
-function ThemeSync({ theme }: { theme: Theme }) {
+// Updates only /styles.css when app theme changes — without resetting user code
+function ThemeSync({ appTheme }: { appTheme: Theme }) {
   const { sandpack } = useSandpack()
   const mounted = useRef(false)
 
   useEffect(() => {
     if (!mounted.current) { mounted.current = true; return }
-    sandpack.updateFile("/styles.css", buildStyles(theme))
-  }, [theme]) // eslint-disable-line react-hooks/exhaustive-deps
+    sandpack.updateFile("/styles.css", buildStyles(appTheme))
+  }, [appTheme]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return null
 }
+
+// ─── Playground ───────────────────────────────────────────────────────────────
 
 interface PlaygroundProps {
   files: SandpackFiles
@@ -204,26 +206,21 @@ export function Playground({
   height = 650,
   dependencies,
 }: PlaygroundProps) {
-  const { theme } = useTheme()
+  const { theme: appTheme } = useTheme()
+  const { editorTheme } = useEditorTheme()
 
   const [maximized, setMaximized] = useState(false)
   const [editorHeight, setEditorHeight] = useState(height)
 
   useEffect(() => {
-    if (!maximized) {
-      setEditorHeight(height)
-      return
-    }
+    if (!maximized) { setEditorHeight(height); return }
 
     const updateHeight = () => setEditorHeight(window.innerHeight - 64)
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMaximized(false)
-    }
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMaximized(false) }
 
     updateHeight()
     window.addEventListener("resize", updateHeight)
     window.addEventListener("keydown", onKey)
-
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
 
@@ -234,20 +231,14 @@ export function Playground({
     }
   }, [maximized, height])
 
-  // theme intentionally excluded — ThemeSync handles CSS updates imperatively
+  // appTheme intentionally excluded — ThemeSync handles CSS updates imperatively
   const initialFiles = useMemo(
-    () => ({ "/styles.css": { code: buildStyles(theme), hidden: true }, ...files }),
+    () => ({ "/styles.css": { code: buildStyles(appTheme), hidden: true }, ...files }),
     [files], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   return (
-    <div
-      className={
-        maximized
-          ? "fixed inset-0 z-50 flex flex-col bg-[var(--color-bg)] p-4"
-          : "relative my-2"
-      }
-    >
+    <div className={maximized ? "fixed inset-0 z-50 flex flex-col bg-[var(--color-bg)] p-4" : "relative my-2"}>
       <div className="mb-1.5 flex items-center justify-end">
         <button
           onClick={() => setMaximized((v) => !v)}
@@ -255,20 +246,18 @@ export function Playground({
           aria-label={maximized ? "Minimizar editor" : "Maximizar editor"}
         >
           <span className="capitalize">{maximized ? "Minimizar" : "Maximizar"}</span>
-          <span aria-hidden className="text-[13px] leading-none">
-            {maximized ? "⤡" : "⤢"}
-          </span>
+          <span aria-hidden className="text-[13px] leading-none">{maximized ? "⤡" : "⤢"}</span>
         </button>
       </div>
 
       <div className={maximized ? "min-h-0 flex-1" : ""}>
         <SandpackProvider
           template={template}
-          theme={theme === "dark" ? darkTheme : lightTheme}
+          theme={getSandpackTheme(editorTheme, appTheme)}
           files={initialFiles}
           customSetup={dependencies ? { dependencies } : undefined}
         >
-          <ThemeSync theme={theme} />
+          <ThemeSync appTheme={appTheme} />
           <SandpackLayout>
             <SandpackCodeEditor
               showLineNumbers

@@ -48,8 +48,8 @@ export default function App() {
 
   useEffect(() => {
     document.getElementById("scroll-area")?.scrollTo({ top: 0, behavior: "auto" })
-    const label = exercise?.label ?? concept?.label ?? "react learn"
-    document.title = isHome ? "react learn" : `${label} — react learn`
+    const label = exercise?.label ?? concept?.label ?? "React Dojo"
+    document.title = isHome ? "React Dojo" : `${label} — React Dojo`
   }, [isHome, concept?.id, concept?.label, exercise?.id, exercise?.label])
 
   const pageKey = isHome

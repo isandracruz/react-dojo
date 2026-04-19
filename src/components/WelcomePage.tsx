@@ -14,12 +14,12 @@ export function WelcomePage() {
 
         {/* Title */}
         <h1 className="font-mono text-[30px] font-medium leading-none text-[var(--color-fg)]">
-          react learn
+          React Dojo
         </h1>
 
         {/* Description */}
         <p className="mt-4 text-[16px] leading-[1.7] text-[var(--color-fg-muted)]">
-          Domina React de adentro hacia afuera. Cada concepto viene con explicación, playground interactivo y ejercicios donde escribes código real — sin atajos.
+          React se aprende practicando. Cada concepto tiene explicación, playground interactivo y ejercicios de código real — sin atajos.
         </p>
 
         {/* Stats */}

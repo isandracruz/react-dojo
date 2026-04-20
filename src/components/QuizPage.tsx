@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import confetti from "canvas-confetti"
 import { cn } from "@/lib/utils"
 import { navigate } from "@/hooks/useHashRoute"
 import type { Quiz } from "@/content/quiz"
 import { allQuizzes } from "@/content/quiz"
+import { useProgress } from "@/hooks/useProgress"
 
 interface QuizPageProps {
   quiz: Quiz
@@ -10,15 +12,48 @@ interface QuizPageProps {
 
 type AnswerState = "unanswered" | "correct" | "wrong"
 
-export function QuizPage({ quiz }: QuizPageProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
-  const [finished, setFinished] = useState(false)
+interface QuizSession {
+  currentIndex: number
+  selected: number | null
+  score: number
+  finished: boolean
+}
 
+function sessionKey(id: string) {
+  return `react-dojo-quiz-session-${id}`
+}
+
+function loadSession(id: string): QuizSession {
+  try {
+    const raw = localStorage.getItem(sessionKey(id))
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return { currentIndex: 0, selected: null, score: 0, finished: false }
+}
+
+function saveSession(id: string, session: QuizSession) {
+  localStorage.setItem(sessionKey(id), JSON.stringify(session))
+}
+
+function clearSession(id: string) {
+  localStorage.removeItem(sessionKey(id))
+}
+
+export function QuizPage({ quiz }: QuizPageProps) {
+  const initial = loadSession(quiz.id)
+  const [currentIndex, setCurrentIndex] = useState(initial.currentIndex)
+  const [selected, setSelected] = useState<number | null>(initial.selected)
+  const [score, setScore] = useState(initial.score)
+  const [finished, setFinished] = useState(initial.finished)
+
+  const { saveQuizScore } = useProgress()
   const question = quiz.questions[currentIndex]
   const total = quiz.questions.length
   const answered = selected !== null
+
+  useEffect(() => {
+    saveSession(quiz.id, { currentIndex, selected, score, finished })
+  }, [quiz.id, currentIndex, selected, score, finished])
 
   function handleSelect(index: number) {
     if (answered) return
@@ -36,11 +71,21 @@ export function QuizPage({ quiz }: QuizPageProps) {
   }
 
   function handleRestart() {
+    clearSession(quiz.id)
     setCurrentIndex(0)
     setSelected(null)
     setScore(0)
     setFinished(false)
   }
+
+  useEffect(() => {
+    if (!finished) return
+    const pct = Math.round((score / total) * 100)
+    saveQuizScore(quiz.id, pct)
+    if (pct >= 80) {
+      confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } })
+    }
+  }, [finished, quiz.id, score, total, saveQuizScore])
 
   if (finished) {
     const pct = Math.round((score / total) * 100)
@@ -139,6 +184,7 @@ export function QuizPage({ quiz }: QuizPageProps) {
                 disabled={answered}
                 className={cn(
                   "w-full rounded-lg border px-5 py-4 text-left text-[14px] leading-[1.5] transition-colors",
+                  answered ? "cursor-default" : "cursor-pointer",
                   !answered &&
                     "border-[var(--color-line)] text-[var(--color-fg-muted)] hover:border-[var(--color-fg-muted)] hover:text-[var(--color-fg)]",
                   state === "correct" &&

@@ -1,9 +1,10 @@
 import { useState } from "react"
-import { Lightbulb, BookOpen } from "lucide-react"
+import { Lightbulb, BookOpen, CheckCircle2, Circle } from "lucide-react"
 import { Playground } from "@/components/Playground"
 import { navigate } from "@/hooks/useHashRoute"
 import { cn } from "@/lib/utils"
 import type { Exercise } from "@/content/exercises"
+import { useProgress } from "@/hooks/useProgress"
 
 interface ExercisePageProps {
   exercise: Exercise
@@ -19,6 +20,8 @@ const difficultyColor: Record<string, string> = {
 
 export function ExercisePage({ exercise, prev, next }: ExercisePageProps) {
   const [showSolution, setShowSolution] = useState(false)
+  const { completedExercises, toggleExerciseCompleted } = useProgress()
+  const isCompleted = completedExercises.has(exercise.id)
 
   return (
     <article className="mx-auto max-w-[1000px] px-8 py-20 md:px-12 md:py-28">
@@ -129,8 +132,28 @@ export function ExercisePage({ exercise, prev, next }: ExercisePageProps) {
         </section>
       )}
 
+      {/* Marcar como completado */}
+      <div className="mt-12">
+        <button
+          onClick={() => toggleExerciseCompleted(exercise.id)}
+          className={cn(
+            "flex items-center gap-2 rounded-md border px-4 py-2 text-[14px] transition-colors",
+            isCompleted
+              ? "border-green-500/40 bg-green-500/5 text-green-600 dark:text-green-400"
+              : "border-[var(--color-line)] text-[var(--color-fg-muted)] hover:border-[var(--color-fg-muted)] hover:text-[var(--color-fg)]",
+          )}
+        >
+          {isCompleted ? (
+            <CheckCircle2 className="h-[15px] w-[15px]" strokeWidth={1.8} />
+          ) : (
+            <Circle className="h-[15px] w-[15px]" strokeWidth={1.8} />
+          )}
+          {isCompleted ? "Completado" : "Marcar como completado"}
+        </button>
+      </div>
+
       {/* Footer nav */}
-      <nav className="mt-24 flex items-start justify-between gap-8 border-t border-[var(--color-line)] pt-8 text-[14px]">
+      <nav className="mt-14 flex items-start justify-between gap-8 border-t border-[var(--color-line)] pt-8 text-[14px]">
         {prev ? (
           <a
             href={`#learn/${prev.id}`}

@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react"
 import { type Concept } from "@/content/concepts"
 import { navigate } from "@/hooks/useHashRoute"
+import { useProgress } from "@/hooks/useProgress"
 
 interface ConceptPageProps {
   concept: Concept
@@ -8,6 +10,20 @@ interface ConceptPageProps {
 }
 
 export function ConceptPage({ concept, prev, next }: ConceptPageProps) {
+  const { markConceptVisited } = useProgress()
+  const bottomRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = bottomRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) markConceptVisited(concept.id) },
+      { threshold: 0.5 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [concept.id, markConceptVisited])
+
   return (
     <article className="mx-auto max-w-[720px] px-8 py-20 md:px-12 md:py-28">
       {/* Kicker */}
@@ -73,7 +89,7 @@ export function ConceptPage({ concept, prev, next }: ConceptPageProps) {
       )}
 
       {/* Footer nav */}
-      <nav className="mt-24 flex items-start justify-between gap-8 border-t border-[var(--color-line)] pt-8 text-[14px]">
+      <nav ref={bottomRef} className="mt-24 flex items-start justify-between gap-8 border-t border-[var(--color-line)] pt-8 text-[14px]">
         {prev ? (
           <a
             href={`#${prev.id}`}

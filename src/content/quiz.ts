@@ -178,12 +178,12 @@ const patronesQuestions: QuizQuestion[] = [
   },
   {
     id: "q13",
-    question: "¿Qué es prop drilling y cuál es su mayor desventaja?",
+    question: "¿Qué es prop drilling?",
     options: [
-      "Pasar props con el operador spread; la desventaja es el rendimiento",
-      "Pasar props por múltiples niveles de componentes intermedios que no las necesitan",
-      "Usar demasiadas props en un componente; complica el tipado",
-      "Pasar funciones como props; causa re-renders innecesarios",
+      "Pasar props usando el operador spread en cada componente",
+      "Pasar props por componentes intermedios que no las necesitan solo para que lleguen a un componente profundo",
+      "Usar demasiadas props en un mismo componente",
+      "Pasar funciones como props entre componentes hermanos",
     ],
     correctIndex: 1,
     explanation:
@@ -217,6 +217,139 @@ const patronesQuestions: QuizQuestion[] = [
   },
 ]
 
+const avanzadoQuestions: QuizQuestion[] = [
+  {
+    id: "qa1",
+    question: "¿Qué garantiza React al usar startTransition?",
+    options: [
+      "Que la actualización se ejecuta en un Web Worker para no bloquear el hilo principal",
+      "Que la actualización es urgente y se procesa antes que cualquier otra",
+      "Que la actualización puede ser interrumpida si llega una actualización más urgente",
+      "Que el componente no se re-renderiza hasta que la transición termina",
+    ],
+    correctIndex: 2,
+    explanation:
+      "startTransition marca una actualización como no urgente. React puede interrumpirla si aparece algo urgente (como un keystroke). Esto evita que actualizaciones pesadas bloqueen la UI — el hilo principal sigue siendo uno solo.",
+  },
+  {
+    id: "qa2",
+    question: "¿Cuál es la diferencia entre un React Server Component y un Client Component?",
+    options: [
+      "Los Server Components se renderizan en el servidor y nunca envían JavaScript al cliente; los Client Components sí",
+      "Los Server Components son más rápidos porque usan WebSockets en lugar de HTTP",
+      "Los Client Components solo funcionan en el navegador; los Server Components funcionan en ambos lados",
+      "No hay diferencia real, es solo una convención de nombres",
+    ],
+    correctIndex: 0,
+    explanation:
+      "Los RSC se ejecutan exclusivamente en el servidor — su código nunca llega al bundle del cliente. Pueden acceder a bases de datos y archivos directamente. Los Client Components ('use client') se hidratan en el navegador y pueden usar estado, efectos y eventos.",
+  },
+  {
+    id: "qa3",
+    question: "¿Qué problema resuelve useOptimistic en React 19?",
+    options: [
+      "Permite cancelar actualizaciones de estado que aún no se confirmaron",
+      "Muestra un estado provisional inmediatamente mientras una acción asíncrona está en curso, luego lo reemplaza con el resultado real",
+      "Optimiza los re-renders de listas largas usando virtualización automática",
+      "Precarga los datos de la siguiente ruta antes de que el usuario navegue",
+    ],
+    correctIndex: 1,
+    explanation:
+      "useOptimistic permite aplicar un cambio de UI de forma inmediata (optimista) sin esperar la respuesta del servidor. Si la operación falla, React revierte al estado real. Es ideal para likes, ediciones inline y cualquier acción que quieras que se sienta instantánea.",
+  },
+  {
+    id: "qa4",
+    question: "¿Por qué pasar un nuevo objeto como value a un Context en cada render es problemático?",
+    options: [
+      "Viola las reglas de los Hooks",
+      "Hace que todos los consumidores del Context se re-rendericen aunque los datos no hayan cambiado",
+      "Rompe la comparación de identidad de React.memo",
+      "Solo es problemático si el objeto tiene más de 10 propiedades",
+    ],
+    correctIndex: 1,
+    explanation:
+      "React compara el value del Context por referencia. Si el padre hace <Ctx.Provider value={{ a, b }}>, crea un objeto nuevo en cada render — referencia distinta — y todos los consumidores se re-renderizan. La solución es memoizar el value con useMemo.",
+  },
+  {
+    id: "qa5",
+    question: "¿Qué es el React Compiler (antes React Forget)?",
+    options: [
+      "Un transpilador que convierte JSX a JavaScript puro sin necesidad de Babel",
+      "Una herramienta que compila componentes de React a WebAssembly para mayor rendimiento",
+      "Un compilador que inserta automáticamente useMemo y useCallback donde son necesarios, eliminando re-renders innecesarios",
+      "Un plugin de TypeScript que valida el uso correcto de los hooks en tiempo de compilación",
+    ],
+    correctIndex: 2,
+    explanation:
+      "React Compiler analiza el código en tiempo de build y agrega memoización automática donde detecta que el valor no cambia. El objetivo es que los desarrolladores no tengan que pensar en useMemo/useCallback manualmente. Disponible en React 19 como opt-in.",
+  },
+  {
+    id: "qa6",
+    question: "¿Cuándo un Error Boundary NO captura un error?",
+    options: [
+      "Cuando el error ocurre en el render de un componente hijo",
+      "Cuando el error ocurre dentro de un event handler, código asíncrono o el propio Error Boundary",
+      "Cuando el componente usa hooks en lugar de ser una clase",
+      "Cuando el error proviene de una librería externa",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Los Error Boundaries solo capturan errores en el render, en métodos del ciclo de vida y en constructores de componentes hijos. No capturan errores en event handlers (usa try/catch ahí), código asíncrono (setTimeout, fetch) ni en el propio boundary.",
+  },
+  {
+    id: "qa7",
+    question: "¿Qué hace Suspense en combinación con lazy()?",
+    options: [
+      "Congela el render del árbol completo hasta que el componente lazy carga",
+      "Muestra el fallback mientras el bundle del componente lazy se está descargando, luego lo reemplaza",
+      "Precarga todos los componentes lazy al iniciar la aplicación",
+      "Hace que los componentes lazy carguen en paralelo siempre",
+    ],
+    correctIndex: 1,
+    explanation:
+      "lazy() carga el componente de forma diferida (code splitting). Cuando React intenta renderizarlo y el bundle aún no llegó, 'suspende' ese subárbol y muestra el fallback del Suspense más cercano. Cuando carga, React renderiza el componente real.",
+  },
+  {
+    id: "qa8",
+    question: "¿Qué ocurre con el estado de un componente cuando React lo desmonta y lo vuelve a montar?",
+    options: [
+      "El estado se preserva porque React lo guarda en el Virtual DOM",
+      "El estado se resetea completamente — React destruye y recrea la instancia",
+      "El estado se preserva solo si usas useRef en lugar de useState",
+      "React muestra un warning pero preserva el estado por defecto",
+    ],
+    correctIndex: 1,
+    explanation:
+      "React vincula el estado al árbol de componentes, no al componente como entidad. Cuando un componente se desmonta, su estado desaparece. Al montar de nuevo, empieza desde cero. Cambiar la key de un componente fuerza este ciclo intencionalmente.",
+  },
+  {
+    id: "qa9",
+    question: "¿Cuál es el propósito de useId en React 18+?",
+    options: [
+      "Generar IDs únicos estables entre el servidor y el cliente para evitar errores de hidratación",
+      "Crear identificadores únicos para las keys de listas dinámicas",
+      "Reemplazar a crypto.randomUUID() en entornos sin acceso a la API Web",
+      "Asignar un ID único a cada instancia de un hook personalizado",
+    ],
+    correctIndex: 0,
+    explanation:
+      "useId genera un ID único y estable que coincide entre el render del servidor y la hidratación del cliente. Es ideal para atributos como htmlFor/id en formularios. No debe usarse como key de lista — para eso necesitas IDs de tus datos.",
+  },
+  {
+    id: "qa10",
+    question: "¿Qué son las Actions en React 19?",
+    options: [
+      "Un reemplazo de Redux para manejar estado global sin librerías externas",
+      "Funciones que se pasan a elementos de formulario para manejar envíos de forma asíncrona, con estados de pending y error integrados",
+      "Eventos personalizados que reemplazan a los event handlers de React",
+      "Una API para despachar actualizaciones de estado desde fuera de los componentes",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Las Actions son funciones (sync o async) que puedes pasar al atributo action de un <form>. React maneja automáticamente el estado de pending con useFormStatus y los errores. Eliminan el patrón manual de isLoading/error en formularios.",
+  },
+]
+
 export const allQuizzes: Quiz[] = [
   {
     id: "fundamentos",
@@ -235,6 +368,12 @@ export const allQuizzes: Quiz[] = [
     label: "Patrones",
     description: "HOC, Render Props, Controlled components y composición",
     questions: patronesQuestions,
+  },
+  {
+    id: "avanzado",
+    label: "Avanzado",
+    description: "Concurrent React, Server Components, React 19 y rendimiento profundo",
+    questions: avanzadoQuestions,
   },
 ]
 

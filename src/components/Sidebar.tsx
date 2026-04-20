@@ -7,6 +7,7 @@ import {
   Dumbbell,
   MessageCircleQuestion,
   Brain,
+  Check,
 } from "lucide-react"
 import type { ComponentType } from "react"
 import { cn } from "@/lib/utils"
@@ -14,6 +15,7 @@ import { navigate } from "@/hooks/useHashRoute"
 import { categories, conceptIndex } from "@/content/concepts"
 import { allExercises, type Difficulty } from "@/content/exercises"
 import { allQuizzes } from "@/content/quiz"
+import { useProgress } from "@/hooks/useProgress"
 
 interface SidebarProps {
   current: string
@@ -61,6 +63,7 @@ function DifficultyDots({ level }: { level: Difficulty }) {
 export function Sidebar({ current }: SidebarProps) {
   const isExerciseRoute = current.startsWith("learn/")
   const activeExerciseId = isExerciseRoute ? current.slice(6) : null
+  const { visitedConcepts, completedExercises, quizScores } = useProgress()
 
   return (
     <aside className="hidden md:block w-[240px] shrink-0 overflow-y-auto border-r border-[var(--color-line)] py-8">
@@ -82,6 +85,7 @@ export function Sidebar({ current }: SidebarProps) {
                 const concept = conceptIndex[id]
                 if (!concept) return null
                 const active = !isExerciseRoute && current === id
+                const visited = visitedConcepts.has(id)
                 return (
                   <li key={id}>
                     <a
@@ -104,6 +108,12 @@ export function Sidebar({ current }: SidebarProps) {
                         />
                       )}
                       <span className="font-mono">{concept.label}</span>
+                      {visited && (
+                        <Check
+                          className="ml-auto h-[11px] w-[11px] shrink-0 text-[var(--color-fg-faint)]"
+                          strokeWidth={2.5}
+                        />
+                      )}
                     </a>
                   </li>
                 )
@@ -125,6 +135,7 @@ export function Sidebar({ current }: SidebarProps) {
         <ul className="space-y-[1px]">
           {allQuizzes.map((quiz) => {
             const active = current === `quiz/${quiz.id}`
+            const bestScore = quizScores[quiz.id]
             return (
               <li key={quiz.id}>
                 <a
@@ -148,7 +159,7 @@ export function Sidebar({ current }: SidebarProps) {
                   )}
                   <span className="truncate">{quiz.label}</span>
                   <span className="ml-auto pl-2 font-mono text-[11px] text-[var(--color-fg-faint)]">
-                    {quiz.questions.length}
+                    {bestScore !== undefined ? `${bestScore}%` : quiz.questions.length}
                   </span>
                 </a>
               </li>
@@ -165,13 +176,14 @@ export function Sidebar({ current }: SidebarProps) {
             strokeWidth={1.8}
           />
           <span>Práctica</span>
-          <span className="ml-auto text-[var(--color-fg-faint)]">
-            {allExercises.length}
+          <span className="ml-auto font-mono text-[var(--color-fg-faint)]">
+            {completedExercises.size}/{allExercises.length}
           </span>
         </h3>
         <ul className="space-y-[1px]">
           {allExercises.map((ex) => {
             const active = isExerciseRoute && activeExerciseId === ex.id
+            const completed = completedExercises.has(ex.id)
             return (
               <li key={ex.id}>
                 <a
@@ -194,7 +206,14 @@ export function Sidebar({ current }: SidebarProps) {
                     />
                   )}
                   <span className="truncate">{ex.label}</span>
-                  <DifficultyDots level={ex.difficulty} />
+                  {completed ? (
+                    <Check
+                      className="ml-auto h-[11px] w-[11px] shrink-0 text-green-500"
+                      strokeWidth={2.5}
+                    />
+                  ) : (
+                    <DifficultyDots level={ex.difficulty} />
+                  )}
                 </a>
               </li>
             )

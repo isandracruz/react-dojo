@@ -3,7 +3,6 @@ import { Search } from "lucide-react"
 import { useTheme } from "@/hooks/useTheme"
 import { useEditorTheme, EDITOR_THEMES_META, type EditorThemeId } from "@/hooks/useEditorTheme"
 import { Logo } from "@/components/Logo"
-
 interface HeaderProps {
   onSearchOpen?: () => void
 }
@@ -70,13 +69,25 @@ export function Header({ onSearchOpen }: HeaderProps) {
           <span aria-hidden className="text-[11px] leading-none translate-y-[-0.5px] transition-transform group-hover:translate-x-[1px] group-hover:translate-y-[-1.5px]">↗</span>
         </a>
 
+        <a
+          href="https://github.com/drbarzaga/react-learn/issues/new"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Reportar un error"
+          title="Reportar un error"
+          className="grid h-7 w-7 place-items-center rounded-md text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-fg)]"
+        >
+          <BugIcon className="h-[15px] w-[15px]" />
+        </a>
+
         {/* Editor theme picker */}
         <div ref={pickerRef} className="relative" onBlur={handlePickerBlur}>
           <button
             type="button"
             onClick={() => setPickerOpen((v) => !v)}
             aria-label="Tema del editor"
-            className="grid h-7 w-7 place-items-center rounded-md text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-fg)]"
+            title="Tema del editor"
+            className="grid h-7 w-7 cursor-pointer place-items-center rounded-md text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-fg)]"
           >
             <PaletteIcon className="h-[15px] w-[15px]" />
           </button>
@@ -90,7 +101,6 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   onClick={() => selectTheme(id)}
                   className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--color-bg-hover)]"
                 >
-                  {/* Swatch */}
                   <span
                     className="flex h-5 w-8 shrink-0 items-center gap-[3px] overflow-hidden rounded px-1"
                     style={{ background: meta.bg }}
@@ -115,7 +125,8 @@ export function Header({ onSearchOpen }: HeaderProps) {
           type="button"
           onClick={toggle}
           aria-label={theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
-          className="grid h-7 w-7 place-items-center rounded-md text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-fg)]"
+          title={theme === "dark" ? "Tema claro" : "Tema oscuro"}
+          className="grid h-7 w-7 cursor-pointer place-items-center rounded-md text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-fg)]"
         >
           {theme === "dark" ? <SunIcon className="h-[15px] w-[15px]" /> : <MoonIcon className="h-[15px] w-[15px]" />}
         </button>
@@ -149,6 +160,24 @@ function MoonIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  )
+}
+
+function BugIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M8 2l1.88 1.88" />
+      <path d="M14.12 3.88 16 2" />
+      <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1" />
+      <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" />
+      <path d="M12 20v-9" />
+      <path d="M6.53 9C4.6 8.8 3 7.1 3 5" />
+      <path d="M6 13H2" />
+      <path d="M3 21c0-2.1 1.7-3.9 3.8-4" />
+      <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4" />
+      <path d="M22 13h-4" />
+      <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4" />
     </svg>
   )
 }

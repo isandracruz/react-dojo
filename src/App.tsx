@@ -11,6 +11,7 @@ import { allConcepts, conceptIndex } from "@/content/concepts"
 import { allExercises, exerciseIndex } from "@/content/exercises"
 import { allQuizzes, quizIndex } from "@/content/quiz"
 import { useHashRoute, navigate } from "@/hooks/useHashRoute"
+import { Analytics } from "@vercel/analytics/next"
 
 export default function App() {
   const route = useHashRoute()
@@ -106,6 +107,7 @@ export default function App() {
         </main>
       </div>
       <Footer />
+      <Analytics />
     </div>
   )
 }

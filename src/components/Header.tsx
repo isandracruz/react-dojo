@@ -65,7 +65,17 @@ export function Header({ onSearchOpen }: HeaderProps) {
           rel="noreferrer"
           className="group flex items-center gap-1 text-[13px] text-[var(--color-fg-muted)] hover:text-[var(--color-fg)] transition-colors"
         >
-          <span>react.dev</span>
+          <span>⚛️ react.dev</span>
+          <span aria-hidden className="text-[11px] leading-none translate-y-[-0.5px] transition-transform group-hover:translate-x-[1px] group-hover:translate-y-[-1.5px]">↗</span>
+        </a>
+
+        <a
+          href="https://github.com/drbarzaga/react-dojo"
+          target="_blank"
+          rel="noreferrer"
+          className="group flex items-center gap-1 text-[13px] text-[var(--color-fg-muted)] hover:text-[var(--color-fg)] transition-colors"
+        >
+          <span>⭐ GitHub</span>
           <span aria-hidden className="text-[11px] leading-none translate-y-[-0.5px] transition-transform group-hover:translate-x-[1px] group-hover:translate-y-[-1.5px]">↗</span>
         </a>
 

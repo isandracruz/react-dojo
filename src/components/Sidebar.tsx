@@ -15,6 +15,21 @@ import { useProgress } from "@/hooks/useProgress"
 
 type IconC = ComponentType<{ className?: string; strokeWidth?: number }>
 
+function QuizRing({ score }: { score: number }) {
+  const r    = 5.5
+  const circ = 2 * Math.PI * r
+  const offset = circ * (1 - score / 100)
+  const color  = score >= 80 ? "#34d399" : score >= 50 ? "#fbbf24" : "#f87171"
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" className="shrink-0 -rotate-90">
+      <circle cx="8" cy="8" r={r} fill="none" stroke="currentColor" strokeWidth="1.8"
+        className="text-sidebar-foreground/10" />
+      <circle cx="8" cy="8" r={r} fill="none" stroke={color} strokeWidth="1.8"
+        strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} />
+    </svg>
+  )
+}
+
 const categoryIcon: Record<string, IconC> = {
   estado: Boxes,
   sincronizacion: RefreshCw,
@@ -207,7 +222,8 @@ export function Sidebar() {
                 label={quiz.label}
                 active={active}
                 onClick={() => router.push(`/quiz/${quiz.id}`)}
-                badge={bestScore !== undefined ? `${bestScore}%` : quiz.questions.length}
+                indicator={bestScore !== undefined ? <QuizRing score={bestScore} /> : undefined}
+                badge={bestScore === undefined ? quiz.questions.length : undefined}
               />
             )
           })}
